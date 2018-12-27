@@ -1,0 +1,120 @@
+<html>
+    <head>
+    <title>Photo Math</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"> </script>
+    </head>
+
+<h1>Photo Math</h1>
+
+<form action="" id="upload">
+  <fieldset>
+    <legend>Upload Image</legend>
+    <p>
+      <label for="upload_preset" hidden> <input type="text" name="upload_preset" id="upload_preset" value="gzqyk9s2"></label>
+    </p>
+    <p>
+      <label >Select your photo:
+      <input type="file" name="file" id="file"></label>
+    </p>
+    
+    <p>
+      <input type="submit" value="Submit" />
+    </p>
+  </fieldset>
+</form>
+<div id="results">
+
+</div>
+
+</html>
+
+<style>
+.response {
+    border: cadetblue;
+    border-style: dotted;
+    border-width: medium;
+    overflow-wrap: break-word;
+}
+</style>
+
+<script>
+
+// Purpose: upload image from local device to cloudinary api
+// Input: .png, .jpeg format image
+// Output: response json including url for accessing the image online 
+
+$('#upload').submit(function(event) {
+    $("#results").empty()
+    
+    cloudName = "dyqdxesp0"
+    
+      event.preventDefault();
+
+    $.ajax({
+            url: "https://api.cloudinary.com/v1_1/" + cloudName + "/image/upload",
+            type: 'POST',
+            data: new FormData(this),
+            processData: false,
+            contentType: false
+        }).done(ajaxSuccessCloudinary)
+        .fail(function(msg) {
+            console.error(msg);
+            $('#results').text(msg);
+        });
+});
+
+
+// Purpose: display image on the page
+// Input:  cloudinary api respone json object
+// Output: posts image on screen for the user
+
+window.ajaxSuccessCloudinary = function(response) {
+    
+    $("<img>").attr("src", response["secure_url"]).appendTo('#results');
+    
+     requestTextToImage(response.url)
+
+}
+
+
+// Purpose: to send image to ocr.space api
+// Input:  url of the image 
+// Output: text extracted from the image
+
+function requestTextToImage(url) {
+
+    url = "https://api.ocr.space/parse/imageurl?apikey=%20cb3920885f88957&url=" + url
+    var settings = {
+        success: function(data, textStatus, jqXHR) {
+            var text = data.ParsedResults[0].ParsedText
+            processText(text);
+        },
+        error: function(xhr, textStatus, error) {
+            console.log(xhr.statusText);
+            console.log(textStatus);
+            console.log(error);
+
+        }
+    }
+
+    jQuery.ajax(url, settings);
+}
+
+// Purpose: to evaluate the math problem
+// Input:  a string of math problem
+// Output: display the solution to page
+
+function processText(text) {
+    newText = text.replace(/(\r\n\t|\n|\r\t)/gm, "");
+    result = eval(newText)
+    if(result == undefined){
+        $("<div>").addClass('response').text("Invalid input").appendTo('#results');
+    } else {
+        $("<div>").addClass('response').text(newText + " = " + result).appendTo('#results');
+    }
+}
+
+</script>
+
+
+
