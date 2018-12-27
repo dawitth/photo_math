@@ -1,5 +1,5 @@
 # Photo Math
-A simple webpage that takes images of arithmetic math problems and output the solution
+A simple webpage that takes image of arithmetic math problems and output the solution
 
 [Demo][1].
 
