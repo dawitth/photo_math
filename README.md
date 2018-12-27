@@ -1,7 +1,7 @@
 # Photo Math
 A simple webpage that takes images of arithmetic math problems and output the solution
 
-[index.html][1] Standard Version.
+[Demo][1].
 
 ![gif](http://g.recordit.co/lN9NBoqTRV.gif) .
 
